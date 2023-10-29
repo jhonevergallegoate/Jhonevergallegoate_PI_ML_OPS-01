@@ -1,0 +1,4 @@
+# Ignorar archivos de datos.
+**/.user_reviews.json.gz
+**/.users_items.json.gz
+**/.steam_games.json.gz
