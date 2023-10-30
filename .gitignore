@@ -1,4 +1,5 @@
 # Ignorar la carpeta "DATA" y su contenido
 # La carpeta 'DATA' contiene los archivos de datos y originales procesados, estos ultimos son muy pesados para subir a github.
 DATA/
+# Ignorar la carpeta "venv" y su contenido.
 /venv
