@@ -1,7 +1,7 @@
 # Ignorar la carpeta "DATA" y su contenido
 # La carpeta 'DATA' contiene los archivos de datos y originales procesados, estos ultimos son muy pesados para subir a github.
 DATA/
+
 # Ignorar la carpeta "venv" y su contenido.
-/venv
-C:\Users\jhgal\Escritorio\Jhonevergallegoate_PI_ML_OPS-01\API\venv/
-# Ignorar la carpeta "venv" y su contenido.
+# La carpeta 'venv' contiene el entorno virtual de python, no es necesario subirlo a github.
+/.venv
