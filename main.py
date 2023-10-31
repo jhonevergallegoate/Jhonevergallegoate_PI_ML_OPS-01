@@ -84,14 +84,15 @@ def UserForGenre(genero: str):
         }
     except Exception as e:
         return {"error": str(e)}  # Devolvemos un mensaje de error en caso de excepción
-
+'''
+'''
 '''
 Función 3:  def UsersRecommend( año : int ): Devuelve el top 3 de juegos MÁS recomendados por usuarios para el año dado. 
                 (reviews.recommend = True y comentarios positivos/neutrales)
             Ejemplo de retorno: [{"Puesto 1" : X}, {"Puesto 2" : Y},{"Puesto 3" : Z}]
                         
 '''
-
+'''
 @app.get("/UsersRecommend/{año}")
 def UsersRecommend(año: int):
     try:
@@ -111,13 +112,13 @@ def UsersRecommend(año: int):
         return result
     except Exception as e:
         return {"error": str(e)}
-
+'''
 '''
 Función 4:  def UsersNotRecommend( año : int ): Devuelve el top 3 de juegos MENOS recomendados por usuarios para el año dado.
                 (reviews.recommend = False y comentarios negativos)
             Ejemplo de retorno: [{"Puesto 1" : X}, {"Puesto 2" : Y},{"Puesto 3" : Z}]
 '''
-
+'''
 @app.get("/UsersNotRecommend/{año}")
 def UsersNotRecommend(año: int):
     try:
@@ -137,11 +138,12 @@ def UsersNotRecommend(año: int):
         return result
     except Exception as e:
         return {"error": str(e)}
-
+'''
 '''
 Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento, se devuelve una lista con la cantidad de registros
                 de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento.
             Ejemplo de retorno: {Negative = 182, Neutral = 120, Positive = 278}
+'''
 '''
 
 @app.get("/sentiment_analysis/{año}")
@@ -159,6 +161,7 @@ def sentiment_analysis(año: int):
         return result
     except Exception as e:
         return {"error": str(e)}
+'''
 
 '''
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
