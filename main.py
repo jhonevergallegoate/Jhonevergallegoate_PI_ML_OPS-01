@@ -6,12 +6,12 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-df_games_items = pd.read_csv('API/df_games_items.csv')
-df_games_reviews = pd.read_csv('API/df_games_reviews.csv')
-df_games_reviews_false = pd.read_csv('API/df_games_reviews_false.csv')
-df_sentimental = pd.read_csv('API/df_sentimental.csv')
-df_games = pd.read_csv('API/df_games.csv')
-df_games_csv = pd.read_csv('API/df_games.csv')
+df_games_items = pd.read_csv('df_games_items.csv')
+df_games_reviews = pd.read_csv('df_games_reviews.csv')
+df_games_reviews_false = pd.read_csv('df_games_reviews_false.csv')
+df_sentimental = pd.read_csv('df_sentimental.csv')
+df_games = pd.read_csv('df_games.csv')
+df_games_csv = pd.read_csv('df_games.csv')
 
 '''
 Función 1:  def PlayTimeGenre(genero : str): Debe devolver año con mas horas jugadas para dicho género.
