@@ -19,6 +19,32 @@ Función 1:  def PlayTimeGenre(genero : str): Debe devolver año con mas horas j
 '''
 
 @app.get("/PlayTimeGenre/{genero}")
+def PlayTimeGenre(genero: str):
+    # Filtrar el DataFrame por el género especificado
+    df_genre = df_games_items[df_games_items['genres'].str.contains(genero)]
+
+    if df_genre.empty:
+        return f"No hay datos disponibles para el género {genero}"
+
+    # Hacer una copia del DataFrame filtrado
+    df_genre = df_genre.copy()
+
+    # Convertir la columna 'release_date' en tipo datetime
+    df_genre['release_date'] = pd.to_datetime(df_genre['release_date'], format='%Y-%m-%d', errors='coerce')
+
+    # Extraer el año de la columna 'release_date'
+    df_genre['release_year'] = df_genre['release_date'].dt.year
+
+    # Agrupar por año y calcular las horas jugadas totales
+    result = df_genre.groupby(df_genre['release_year'])['playtime_forever'].sum()
+
+    # Encontrar el año con más horas jugadas
+    max_year = result.idxmax()
+
+    return {f"Año de lanzamiento con más horas jugadas para Género {genero}": max_year}
+
+'''
+@app.get("/PlayTimeGenre/{genero}")
 def PlayTimeGenre(genero):
     # Filtrar el DataFrame por el género especificado
     df_genre = df_games_items[df_games_items['genres'].str.lower().str.contains(genero)]
@@ -42,6 +68,7 @@ def PlayTimeGenre(genero):
     max_year = result.idxmax()
 
     return {f"Año de lanzamiento con más horas jugadas para Género {genero}": max_year} 
+'''
 
 '''
 Función 2:  def UserForGenre( genero : str ): Debe devolver el usuario que acumula más horas jugadas para el género dado y una lista
