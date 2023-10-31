@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import FastAPI
 from fastapi import HTTPException
+import os
 
 app = FastAPI()
 
@@ -23,24 +24,24 @@ Función 1:  def PlayTimeGenre(genero : str): Debe devolver año con mas horas j
 def PlayTimeGenre(genero: str):
     try:
         # Filtrar el DataFrame por el género especificado
-        df_genre = df_games_items[df_games_items['genres'].str.contains(genero)]
+        df_genre = df_games_items[df_games_items['genres'].str.contains(genero, case=False)]  # Usar case=False para hacerlo insensible a mayúsculas/minúsculas
         if df_genre.empty:
-            raise HTTPException(status_code=404, detail=f"No hay datos disponibles para el género {genero}")
+            return {"message": f"No hay datos de horas jugadas para el género {genero}"}
         # Hacer una copia del DataFrame filtrado
         df_genre = df_genre.copy()
-        # Convertir la columna 'release_date' en tipo datetime
+        # Convierte la columna 'release_date' en tipo datetime
         df_genre['release_date'] = pd.to_datetime(df_genre['release_date'], format='%Y-%m-%d', errors='coerce')
         # Extraer el año de la columna 'release_date'
         df_genre['release_year'] = df_genre['release_date'].dt.year
-        # Agrupar por año y calcular las horas jugadas totales
-        result = df_genre.groupby(df_genre['release_year'])['playtime_forever'].sum()
-        # Encontrar el año con más horas jugadas
-        max_year = result.idxmax()
-        return {f"Año de lanzamiento con más horas jugadas para Género {genero}": max_year}
+        # Agrupar por año, calcular las horas jugadas totales
+        result = df_genre.groupby(df_genre['release_year'])['playtime_forever'].sum().reset_index()
+        if result.empty:
+            return {"message": f"No hay datos de horas jugadas para el género {genero}"}
+        # Encontrar el año con más horas jugadas para el género
+        max_year = result.loc[result['playtime_forever'].idxmax()]
+        return {"Año de lanzamiento con más horas jugadas para Género " + genero: int(max_year['release_year'])}
     except Exception as e:
-        # Manejo de errores generales
-        raise HTTPException(status_code=500, detail="Se produjo un error al procesar la solicitud")
-
+        return {"error": str(e)}
 
 '''
 Función 2:  def UserForGenre( genero : str ): Debe devolver el usuario que acumula más horas jugadas para el género dado y una lista

@@ -5,3 +5,7 @@ DATA/
 # Ignorar la carpeta "venv" y su contenido.
 # La carpeta 'venv' contiene el entorno virtual de python, no es necesario subirlo a github.
 /.venv
+
+# Ingorar el archivo "prueba.ipynb"
+# El archivo 'prueba.ipynb' es un archivo de prueba para probar el funcionamiento de git.
+prueba.ipynb
