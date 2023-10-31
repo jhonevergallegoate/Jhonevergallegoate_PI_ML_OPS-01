@@ -3,8 +3,6 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import FastAPI
-from fastapi import HTTPException
-import os
 
 app = FastAPI()
 
@@ -112,7 +110,7 @@ def UsersRecommend(año: int):
         result = [{"Puesto " + str(i + 1): game} for i, game in enumerate(top_3_games['Juego'])]
         return result
     except Exception as e:
-        return {"error": str(e)}  # Devolvemos un mensaje de error en caso de excepción
+        return {"error": str(e)}
 
 '''
 Función 4:  def UsersNotRecommend( año : int ): Devuelve el top 3 de juegos MENOS recomendados por usuarios para el año dado.
@@ -128,17 +126,17 @@ def UsersNotRecommend(año: int):
         if reviews_filtered.empty:
             return {"message": "No hay reseñas no recomendadas para el año especificado"}
         # Contar las reseñas de cada juego
-        game_counts = reviews_filtered['app_name'].value.counts().reset_index()
+        game_counts = reviews_filtered['app_name'].value_counts().reset_index()
         game_counts.columns = ['Juego', 'Total Reseñas']
         # Ordenar los juegos por la cantidad de reseñas en orden descendente
         game_counts = game_counts.sort_values(by='Total Reseñas', ascending=False)
-        # Tomar los 3 juegos más recomendados
+        # Tomar los 3 juegos menos recomendados
         top_3_games = game_counts.head(3)
         # Crear la lista de retorno en el formato deseado
         result = [{"Puesto " + str(i + 1): game} for i, game in enumerate(top_3_games['Juego'])]
         return result
     except Exception as e:
-        return {"error": str(e)}  # Devolvemos un mensaje de error en caso de excepción
+        return {"error": str(e)}
 
 '''
 Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento, se devuelve una lista con la cantidad de registros
@@ -147,23 +145,20 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
 '''
 
 @app.get("/sentiment_analysis/{año}")
-def sentiment_analysis(year):
+def sentiment_analysis(año: int):
     try:
-        # Filtra el DataFrame para obtener solo las reseñas del año especificado
-        reviews_by_year = df_sentimental[df_sentimental['posted'].str.startswith(str(year))]
-        if reviews_by_year.empty:
-            return {"message": "No hay reseñas para el año especificado"}
-        # Cuenta la cantidad de registros en cada categoría de análisis de sentimiento
-        sentiment_counts = reviews_by_year['sentiment_analysis'].value_counts().to_dict()
-        # Mapea los valores numéricos a las etiquetas deseadas y define el orden
-        sentiment_dict = {
-            'Negative': sentiment_counts.get(0, 0), 
-            'Neutral': sentiment_counts.get(1, 0), 
-            'Positive': sentiment_counts.get(2, 0)
-        }
-        return sentiment_dict
+        # Filtrar el DataFrame por el año especificado
+        df_year = df_sentimental[df_sentimental['year'] == año]
+        if df_year.empty:
+            return {"message": "No hay datos de análisis de sentimiento para el año especificado"}
+        # Contar los registros de cada categoría de análisis de sentimiento
+        result = df_year['sentiment'].value_counts().reset_index()
+        result.columns = ['sentiment', 'count']
+        # Crear la lista de retorno en el formato deseado
+        result = {row['sentiment']: int(row['count']) for _, row in result.iterrows()}
+        return result
     except Exception as e:
-        return {"error": str(e)}  # Devolvemos un mensaje de error en caso de excepción
+        return {"error": str(e)}
 
 '''
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
