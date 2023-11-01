@@ -1,1 +1,2 @@
+# Ignora la carpeta venv, que es donde se instalan las dependencias de python y crea un entorno virtual.
 /venv
