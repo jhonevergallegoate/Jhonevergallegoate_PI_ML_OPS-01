@@ -14,9 +14,9 @@ def Hello():
     return 'Author: Jhon Ever Gallego'
 
 # Creamos la ruta de los datos.
-df_games_items_path = 'API/df_games_items.csv'
-df_games_path = 'API/df_games.csv'
-df_steam_path = 'API/df_steam.csv.gz'
+df_games_items_path = './df_games_items.csv'
+df_games_path = './df_games.csv'
+df_steam_path = './df_steam.csv.gz'
 
 # Cargamos los datos.
 df_games_items = pd.read_csv(df_games_items_path)
