@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import gzip
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import FastAPI
+from fastapi import HTTPException
 
 app = FastAPI()
 
@@ -11,18 +13,22 @@ app = FastAPI()
 def Hello():
     return 'Author: Jhon Ever Gallego'
 
-df_games_items = pd.read_csv('df_games_items.csv')
-df_games_reviews = pd.read_csv('df_games_reviews.csv')
-df_games_reviews_false = pd.read_csv('df_games_reviews_false.csv')
-df_sentimental = pd.read_csv('df_sentimental.csv')
-df_games = pd.read_csv('df_games.csv')
-df_games_csv = pd.read_csv('df_games.csv')
+# Creamos la ruta de los datos.
+df_games_items_path = 'C:/Users/jhgal/Escritorio/Jhonevergallegoate_PI_ML_OPS-01/API/DATA/df_games_items.csv'
+df_games_path = 'C:/Users/jhgal/Escritorio/Jhonevergallegoate_PI_ML_OPS-01/API/DATA/df_games.csv'
+df_steam_path = 'C:/Users/jhgal/Escritorio/Jhonevergallegoate_PI_ML_OPS-01/API/DATA/df_steam.csv.gz'
+
+# Cargamos los datos.
+df_games_items = pd.read_csv(df_games_items_path)
+df_games = pd.read_csv(df_games_path)
+data = pd.read_csv(df_steam_path, compression="gzip")
 
 '''
 Función 1:  def PlayTimeGenre(genero : str): Debe devolver año con mas horas jugadas para dicho género.
                     Ejemplo de retorno: {"Año de lanzamiento con más horas jugadas para Género X" : 2013}
 '''
 
+# http://localhost:8000/PlayTimeGenre/action
 @app.get("/PlayTimeGenre/{genero}")
 def PlayTimeGenre(genero: str):
     try:
@@ -53,6 +59,7 @@ Función 2:  def UserForGenre( genero : str ): Debe devolver el usuario que acum
                         "Horas jugadas":[{Año: 2013, Horas: 203}, {Año: 2012, Horas: 100}, {Año: 2011, Horas: 23}]}
 '''
 
+# http://localhost:8000/UserForGenre/action
 @app.get("/UserForGenre/{genero}")
 def UserForGenre(genero: str):
     try:
@@ -97,25 +104,30 @@ Función 3:  def UsersRecommend( año : int ): Devuelve el top 3 de juegos MÁS 
                         
 '''
 
-@app.get("/UsersRecommend/{año}")
-def UsersRecommend(año: int):
+# http://localhost:8000/UsersRecommend/2011
+@app.get("/UsersRecommend/{year}")
+def UsersRecommend(year: int):
     try:
-        # Filtrar el DataFrame por el año especificado y reseñas recomendadas (recommend = True)
-        reviews_filtered = df_games_reviews[(df_games_reviews['posted'].str[:4] == str(año)) & (df_games_reviews['recommend'] == True)]
-        if reviews_filtered.empty:
-            return {"message": "No hay reseñas recomendadas para el año especificado"}
-        # Contar las reseñas de cada juego
-        game_counts = reviews_filtered['app_name'].value_counts().reset_index()
-        game_counts.columns = ['Juego', 'Total Reseñas']
-        # Ordenar los juegos por la cantidad de reseñas en orden descendente
-        game_counts = game_counts.sort_values(by='Total Reseñas', ascending=False)
-        # Tomar los 3 juegos más recomendados
-        top_3_games = game_counts.head(3)
-        # Crear la lista de retorno en el formato deseado
-        result = [{"Puesto " + str(i + 1): game} for i, game in enumerate(top_3_games['Juego'])]
-        return result
+        # Filtramos por año
+        data_year = data[data["release_date"] == year]
+        # Filtramos por recomendados
+        data_year = data_year[data_year["recommend"] == True]
+        # Filtramos por comentarios positivos/neutrales
+        data_year = data_year[data_year["sentiment"] > 0]
+        # Agrupamos por juego y contamos las recomendaciones
+        data_year = data_year.groupby("app_name")["recommend"].count().reset_index()
+        # Ordenamos de mayor a menor
+        data_year = data_year.sort_values(by="recommend", ascending=False)
+        # Obtenemos el top 3
+        top3 = data_year.head(3).to_dict("records")
+        return {
+            "Top 3 de juegos MÁS recomendados por usuarios para el año": year,
+            "Top 3": top3,  # Asegúrate de definir top3 adecuadamente
+        }
+    except KeyError:
+        raise HTTPException(status_code=404, detail="No se encontraron datos para el año especificado.")
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error inesperado: {str(e)}")
 
 '''
 Función 4:  def UsersNotRecommend( año : int ): Devuelve el top 3 de juegos MENOS recomendados por usuarios para el año dado.
@@ -123,52 +135,81 @@ Función 4:  def UsersNotRecommend( año : int ): Devuelve el top 3 de juegos ME
             Ejemplo de retorno: [{"Puesto 1" : X}, {"Puesto 2" : Y},{"Puesto 3" : Z}]
 '''
 
-@app.get("/UsersNotRecommend/{año}")
-def UsersNotRecommend(año: int):
+# http://localhost:8000/UsersNotRecommend/2009
+@app.get("/UsersNotRecommend/{year}")
+def UsersNotRecommend(year: int):
     try:
-        # Filtrar el DataFrame por el año especificado y reseñas no recomendadas (recommend = False)
-        reviews_filtered = df_games_reviews_false[(df_games_reviews_false['posted'].str[:4] == str(año)) & (df_games_reviews_false['recommend'] == False)]
-        if reviews_filtered.empty:
-            return {"message": "No hay reseñas no recomendadas para el año especificado"}
-        # Contar las reseñas de cada juego
-        game_counts = reviews_filtered['app_name'].value_counts().reset_index()
-        game_counts.columns = ['Juego', 'Total Reseñas']
-        # Ordenar los juegos por la cantidad de reseñas en orden descendente
-        game_counts = game_counts.sort_values(by='Total Reseñas', ascending=False)
-        # Tomar los 3 juegos menos recomendados
-        top_3_games = game_counts.head(3)
-        # Crear la lista de retorno en el formato deseado
-        result = [{"Puesto " + str(i + 1): game} for i, game in enumerate(top_3_games['Juego'])]
-        return result
+        # Filtramos por año
+        data_year = data[data["release_date"] == year]
+        # Filtramos por no recomendados
+        data_year = data_year[data_year["recommend"] == False]
+        # Filtramos por comentarios negativos
+        data_year = data_year[data_year["sentiment"] == 0]
+        # Agrupamos por juego y contamos las recomendaciones
+        data_year = data_year.groupby("app_name")["recommend"].count().reset_index()
+        # Ordenamos de mayor a menor
+        data_year = data_year.sort_values(by="recommend", ascending=False)
+        # Obtenemos el top 3
+        top3 = data_year.head(3).to_dict("records")
+        return {
+            "Top 3 de juegos MENOS recomendados por usuarios para el año": year,
+            "Top 3": top3,  # Asegúrate de definir top3 adecuadamente
+        }
+    except KeyError:
+        raise HTTPException(status_code=404, detail="No se encontraron datos para el año especificado.")
     except Exception as e:
-        return {"error": str(e)}
-    
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error inesperado: {str(e)}")
+
 '''
 Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento, se devuelve una lista con la cantidad de registros
                 de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento.
             Ejemplo de retorno: {Negative = 182, Neutral = 120, Positive = 278}
 '''
 
-@app.get("/sentiment_analysis/{año}")
-def sentiment_analysis(año: int):
+# http://localhost:8000/sentiment_analysis/2010
+@app.get("/sentiment_analysis/{year}")
+def sentiment_analysis(year: int):
     try:
-        # Filtrar el DataFrame por el año especificado
-        df_year = df_sentimental[df_sentimental['year'] == año]
-        if df_year.empty:
-            return {"message": "No hay datos de análisis de sentimiento para el año especificado"}
-        # Contar los registros de cada categoría de análisis de sentimiento
-        result = df_year['sentiment'].value_counts().reset_index()
-        result.columns = ['sentiment', 'count']
-        # Crear la lista de retorno en el formato deseado
-        result = {row['sentiment']: int(row['count']) for _, row in result.iterrows()}
-        return result
+        # Filtramos por año
+        data_year = data[data["release_date"] == year]
+        # Agrupamos por sentimiento y contamos las reseñas
+        data_year = data_year.groupby("sentiment")["review"].count().reset_index()
+        # Verificamos que se obtuvieron datos para el año especificado
+        if data_year.empty:
+            raise HTTPException(status_code=404, detail=f"No se encontraron datos para el año {year}.")
+        # Obtenemos el top 3
+        sentiment = data_year.to_dict("records")
+        # Inicializar contadores
+        negative_count = 0
+        neutral_count = 0
+        positive_count = 0
+        # Contar el número de reseñas con cada sentimiento
+        for s in sentiment:
+            if s["sentiment"] == 0:
+                negative_count += s["review"]
+            elif s["sentiment"] == 1:
+                neutral_count += s["review"]
+            elif s["sentiment"] == 2:
+                positive_count += s["review"]
+        # Crear el diccionario con los contadores
+        sentiment = {
+            "Negative": negative_count,
+            "Neutral": neutral_count,
+            "Positive": positive_count,
+        }
+        return {"Según el año de lanzamiento": year, "Sentimiento": sentiment}
+    except HTTPException:
+        raise
+    except KeyError:
+        raise HTTPException(status_code=404, detail="No se encontraron datos para el año especificado.")
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error inesperado: {str(e)}")
 
 '''
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
 '''
 
+# http://localhost:8000/recomendacion_juego/6210
 @app.get("/recomendacion_juego/{product_id}")
 async def recomendacion_juego(product_id:int):
     try: 
@@ -187,7 +228,7 @@ async def recomendacion_juego(product_id:int):
         similarity_scores = None
 
         # Procesa los juegos por lotes aplicando chunks
-        for chunk in pd.read_csv("./df_games.csv", chunksize=chunk_size):
+        for chunk in pd.read_csv(df_games_path, chunksize=chunk_size):
             # Combina las etiquetas tags y genres en una sola cadena de texto
             chunk_tags_and_genres = " ".join(chunk["tags"].fillna(" ").astype(str) + " " + chunk["genres"].fillna(" ").astype(str))
             

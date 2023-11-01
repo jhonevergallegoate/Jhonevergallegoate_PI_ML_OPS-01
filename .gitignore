@@ -4,3 +4,5 @@ DATA/
 
 # Ignorar la carpeta "venv" y su contenido
 /venv
+venv
+venv/
