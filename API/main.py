@@ -15,7 +15,7 @@ def Hello():
 
 # Creamos la ruta de los datos.
 df_games_items_path = 'API/df_games_items.csv'
-df_games_path = 'API\df_games.csv'
+df_games_path = 'API/df_games.csv'
 df_steam_path = 'API/df_steam.csv.gz'
 
 # Cargamos los datos.
