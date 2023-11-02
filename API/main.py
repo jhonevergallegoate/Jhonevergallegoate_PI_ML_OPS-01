@@ -13,7 +13,7 @@ app = FastAPI()
 # Raiz.
 @app.get("/")
 def Hello():
-    return 'Author: Jhon Ever Gallego'
+    return 'Author: Jhon Ever Gallego Atehortua'
 
 # Creamos la ruta de los datos.
 df_games_items_path = './df_games_items.csv'
@@ -190,8 +190,8 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
 
 # LOCAL HOST: http://localhost:8000/sentiment_analysis/2010
 # REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/sentiment_analysis/2010
-@app.get("/sentiment_analysis/{year}")
-def sentiment_analysis(year: int):
+@app.get("/Sentiment_Analysis/{year}")
+def Sentiment_Analysis(year: int):
     try:
         # Filtramos por año
         data_year = data[data["release_date"] == year]
@@ -240,8 +240,8 @@ Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe u
 
 # LOCAL HOST: http://localhost:8000/recomendacion_juego/6210
 # REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/recomendacion_juego/6210
-@app.get("/recomendacion_juego/{product_id}")
-async def recomendacion_juego(product_id:int):
+@app.get("/Recomendacion_Juego/{product_id}")
+async def Recomendacion_Juego(product_id:int):
     try: 
         # Obtiene el juego de referencia
         target_game = df_games[df_games["id"] == product_id]
