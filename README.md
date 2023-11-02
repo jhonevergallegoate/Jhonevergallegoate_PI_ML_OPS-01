@@ -1,6 +1,6 @@
 # Jhonevergallegoate_PI_ML_OPS-01
 
-**Al final de este README, se incluirá un enlace a mi API desarrollada y un video explicativo sobre el proyecto.**
+**Al final de este README, se incluirá un enlace a mi API desarrollada y un video explicativo sobre el proyecto:**
 [ENLACES Y CONCLUSIONES DEL PROYECTO](#enlaces)
 
 
