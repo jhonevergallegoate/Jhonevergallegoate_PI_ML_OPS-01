@@ -190,7 +190,7 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
             Ejemplo de retorno: {Negative = 182, Neutral = 120, Positive = 278}
 '''
 
-# LOCAL HOST: http://localhost:8000/sentiment_analysis/2010
+# LOCAL HOST: http://localhost:8000/Sentiment_Analysis/2010
 # REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Sentiment_Analysis/2010
 @app.get("/Sentiment_Analysis/{year}")
 def Sentiment_Analysis(year: int):
@@ -237,10 +237,10 @@ def Sentiment_Analysis(year: int):
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
 '''
 
-# LOCAL HOST: http://localhost:8000/recomendacion_juego/6210
-# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Recomendacion_Juego/6210
-@app.get("/Recomendacion_Juego/{product_id}")
-async def Recomendacion_Juego(product_id:int):
+# LOCAL HOST: http://localhost:8000/Game_recommendation/6210
+# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Game_recommendation/6210
+@app.get("/Game_recommendation/{product_id}")
+async def Game_recommendation(product_id:int):
     try: 
         # Obtiene el juego de referencia
         target_game = df_games[df_games["id"] == product_id]
