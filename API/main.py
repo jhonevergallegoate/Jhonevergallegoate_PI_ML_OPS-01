@@ -237,10 +237,10 @@ def Sentiment_Analysis(year: int):
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
 '''
 
-# LOCAL HOST: http://localhost:8000/Game_recommendation/6210
-# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Game_recommendation/6210
-@app.get("/Game_recommendation/{product_id}")
-async def Game_recommendation(product_id:int):
+# LOCAL HOST: http://localhost:8000/Game_Recommendation/6210
+# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Game_Recommendation/6210
+@app.get("/Game_Recommendation/{product_id}")
+async def Game_Recommendation(product_id:int):
     try: 
         # Obtiene el juego de referencia
         target_game = df_games[df_games["id"] == product_id]
