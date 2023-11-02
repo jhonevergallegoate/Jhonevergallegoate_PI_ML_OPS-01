@@ -191,57 +191,48 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
 '''
 
 # LOCAL HOST: http://localhost:8000/sentiment_analysis/2010
-# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/sentiment_analysis/2010
-@app.get("/Sentiment_Analysis/{year}")
+# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Sentiment_Analysis/2010
+@app.get("/Sentiment_Analysis/")
 def Sentiment_Analysis(year: int):
-    try:
-        # Filtramos por año
-        data_year = data[data["release_date"] == year]
-        # Agrupamos por sentimiento y contamos las reseñas
-        data_year = data_year.groupby("sentiment")["review"].count().reset_index()
-        # Verificamos que se obtuvieron datos para el año especificado
-        if data_year.empty:
-            raise HTTPException(status_code=404, detail=f"No se encontraron datos para el año {year}.")
-        
-        # Inicializar contadores
-        negative_count = 0
-        neutral_count = 0
-        positive_count = 0
+    # Filtramos por año
+    data_year = data[data["release_date"] == year]
 
-        # Contar el número de reseñas con cada sentimiento
-        for index, row in data_year.iterrows():
-            sentiment = row["sentiment"]
-            review_count = row["review"]
+    # Verificamos si hay datos para el año especificado
+    if data_year.empty: # Si no hay datos, devolvemos un error 404
+        raise HTTPException(status_code=404, detail=f"No se encontraron datos para el año {year}.") # Devolvemos un error 404
 
-            if sentiment == 0:
-                negative_count += review_count
-            elif sentiment == 1:
-                neutral_count += review_count
-            elif sentiment == 2:
-                positive_count += review_count
+    # Agrupamos por sentimiento y contamos las reseñas
+    data_year = data_year.groupby("sentiment")["review"].count().reset_index()
 
-        # Crear el diccionario con los contadores
-        sentiment_counts = {
-            "Negative": negative_count,
-            "Neutral": neutral_count,
-            "Positive": positive_count,
-        }
+    # Inicializar contadores
+    negative_count = 0
+    neutral_count = 0
+    positive_count = 0
 
-        return sentiment_counts
+    # Contar el número de reseñas con cada sentimiento
+    for index, row in data_year.iterrows():
+        if row["sentiment"] == 0:
+            negative_count += row["review"]
+        elif row["sentiment"] == 1:
+            neutral_count += row["review"]
+        elif row["sentiment"] == 2:
+            positive_count += row["review"]
 
-    except HTTPException:
-        raise
-    except KeyError:
-        raise HTTPException(status_code=404, detail="No se encontraron datos para el año especificado.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ocurrió un error inesperado: {str(e)}")
+    # Crear el diccionario con los contadores
+    sentiment = {
+        "Negative": negative_count,
+        "Neutral": neutral_count,
+        "Positive": positive_count,
+    }
+
+    return sentiment
 
 '''
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
 '''
 
 # LOCAL HOST: http://localhost:8000/recomendacion_juego/6210
-# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/recomendacion_juego/6210
+# REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Recomendacion_Juego/6210
 @app.get("/Recomendacion_Juego/{product_id}")
 async def Recomendacion_Juego(product_id:int):
     try: 
