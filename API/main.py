@@ -196,36 +196,30 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
 def Sentiment_Analysis(year: int):
     # Filtramos por año
     data_year = data[data["release_date"] == year]
-
-    # Verificamos si hay datos para el año especificado
-    if data_year.empty: # Si no hay datos, devolvemos un error 404
-        raise HTTPException(status_code=404, detail=f"No se encontraron datos para el año {year}.") # Devolvemos un error 404
-
     # Agrupamos por sentimiento y contamos las reseñas
     data_year = data_year.groupby("sentiment")["review"].count().reset_index()
-
+    # Obtenemos el top 3
+    sentiment = data_year.to_dict("records")
     # Inicializar contadores
     negative_count = 0
     neutral_count = 0
     positive_count = 0
-
     # Contar el número de reseñas con cada sentimiento
-    for index, row in data_year.iterrows():
-        if row["sentiment"] == 0:
-            negative_count += row["review"]
-        elif row["sentiment"] == 1:
-            neutral_count += row["review"]
-        elif row["sentiment"] == 2:
-            positive_count += row["review"]
-
+    for s in sentiment:
+        if s["sentiment"] == 0:
+            negative_count += s["review"]
+        elif s["sentiment"] == 1:
+            neutral_count += s["review"]
+        elif s["sentiment"] == 2:
+            positive_count += s["review"]
     # Crear el diccionario con los contadores
     sentiment = {
         "Negative": negative_count,
         "Neutral": neutral_count,
         "Positive": positive_count,
-    }
 
-    return sentiment
+    }
+    return {"Según el año de lanzamiento": year, "Sentimiento": sentiment}
 
 '''
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
