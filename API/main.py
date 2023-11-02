@@ -194,32 +194,44 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
 # REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Sentiment_Analysis/2010
 @app.get("/Sentiment_Analysis/")
 def Sentiment_Analysis(year: int):
-    # Filtramos por año
-    data_year = data[data["release_date"] == year]
-    # Agrupamos por sentimiento y contamos las reseñas
-    data_year = data_year.groupby("sentiment")["review"].count().reset_index()
-    # Obtenemos el top 3
-    sentiment = data_year.to_dict("records")
-    # Inicializar contadores
-    negative_count = 0
-    neutral_count = 0
-    positive_count = 0
-    # Contar el número de reseñas con cada sentimiento
-    for s in sentiment:
-        if s["sentiment"] == 0:
-            negative_count += s["review"]
-        elif s["sentiment"] == 1:
-            neutral_count += s["review"]
-        elif s["sentiment"] == 2:
-            positive_count += s["review"]
-    # Crear el diccionario con los contadores
-    sentiment = {
-        "Negative": negative_count,
-        "Neutral": neutral_count,
-        "Positive": positive_count,
+    try:
+        # Filtramos por año
+        data_year = data[data["release_date"] == year]
+        # Agrupamos por sentimiento y contamos las reseñas
+        data_year = data_year.groupby("sentiment")["review"].count().reset_index()
+        # Verificamos que se obtuvieron datos para el año especificado
+        if data_year.empty:
+            raise HTTPException(status_code=404, detail=f"No se encontraron datos para el año {year}.")
 
-    }
-    return {"Según el año de lanzamiento": year, "Sentimiento": sentiment}
+        # Obtenemos el top 3
+        sentiment = data_year.to_dict("records")
+        # Inicializar contadores
+        negative_count = 0
+        neutral_count = 0
+        positive_count = 0
+        # Contar el número de reseñas con cada sentimiento
+        for s in sentiment:
+            if s["sentiment"] == 0:
+                negative_count += s["review"]
+            elif s["sentiment"] == 1:
+                neutral_count += s["review"]
+            elif s["sentiment"] == 2:
+                positive_count += s["review"]
+        # Crear el diccionario con los contadores
+        result = {
+            "Negative": negative_count,
+            "Neutral": neutral_count,
+            "Positive": positive_count,
+        }
+
+        return result
+
+    except HTTPException:
+        raise
+    except KeyError:
+        raise HTTPException(status_code=404, detail="No se encontraron datos para el año especificado.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error inesperado: {str(e)}")
 
 '''
 Sistema de recomendación:  def recommendation_system( usuario : str ): Recibe un usuario y devuelve una lista con los 5 juegos
