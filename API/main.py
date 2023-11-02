@@ -192,7 +192,7 @@ Función 5:  def sentiment_analysis( año : int ): Según el año de lanzamiento
 
 # LOCAL HOST: http://localhost:8000/sentiment_analysis/2010
 # REQUEST URL: https://jhonevergallegoate-pi-ml-ops-01.onrender.com/Sentiment_Analysis/2010
-@app.get("/Sentiment_Analysis/")
+@app.get("/Sentiment_Analysis/{year}")
 def Sentiment_Analysis(year: int):
     try:
         # Filtramos por año
