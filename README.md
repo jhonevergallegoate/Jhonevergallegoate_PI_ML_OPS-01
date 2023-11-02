@@ -1,5 +1,7 @@
 # Jhonevergallegoate_PI_ML_OPS-01
-# Al final de este proyecto, se incluirá un enlace a mi API desarrollada y un video explicativo sobre el proyecto.
+
+Al final de este proyecto, se incluirá un enlace a mi API desarrollada y un video explicativo sobre el proyecto.
+
 <p align=center><img src=https://d31uz8lwfmyn8g.cloudfront.net/Assets/logo-henry-white-lg.png><p>
 
 # <h1 align=center> **PROYECTO INDIVIDUAL Nº1** </h1>
@@ -147,11 +149,11 @@ En este mismo repositorio podrás encontrar algunos (hay repositorios con distin
 
 ## ENLACES Y CONCLUSIONES DEL PROYECTO.
 
-**`CONCLUSIONES`**
+**`CONCLUSIONES:`**
 
 En este proyecto, asumí el rol de un Data Scientist, enfocándome en un proceso clave en la ciencia de datos. Inicié con el ETL (extracción, transformación y carga) de datos desde diversas fuentes. Luego, realicé un análisis exploratorio de datos (EDA) para comprender mejor el dataset. Finalmente, desarrollé una API con FastAPI para permitir consultas y recibir recomendaciones de juegos similares.
 
-PASOS DEL PROYECTO:
+**`PASOS DEL PROYECTO:`**
 
 1) ETL: Extraje, transformé y limpié datos en formato GZIP y JSON.
 
@@ -163,10 +165,10 @@ PASOS DEL PROYECTO:
 
 5) Despliegue (Deploy): Utilicé la plataforma RENDER para poner en funcionamiento el modelo y hacer que las recomendaciones basadas en similitud de cosenos sean eficientes y accesibles.
 
-ENLACES DEL PROYECTO:
+**`ENLACES DEL PROYECTO:`**
 
 * **`ENLACE A LA API:`** En el Siguiente [enlace de la API](https://jhonevergallegoate-pi-ml-ops-01.onrender.com) podras encontrar el acceso a la API de este proyecto y realizar las consultas que se proponen.
 
-* **`ENLACE AL VIDEO EXPLICATIVO:`** Se ha creado un [video explicativo](video.mp4) donde te explico como se desarrolló este proyecto y como funciona la API.
+* **`ENLACE AL VIDEO EXPLICATIVO:`** Se ha creado un [video explicativo](https://) donde te explico como se desarrolló este proyecto y como funciona la API.
 
 <br/>
