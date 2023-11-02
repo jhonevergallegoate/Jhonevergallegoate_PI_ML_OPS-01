@@ -248,7 +248,7 @@ async def recomendacion_juego(product_id:int):
             similar_games_indices = similarity_scores[0].argsort()[::-1]
             # Recomienda los juegos más similares 
             num_recomendation = 5
-            recommended_games = df_games_csv.iloc[similar_games_indices[1:num_recomendation + 1]]
+            recommended_games = df_games.iloc[similar_games_indices[1:num_recomendation + 1]]
             # Devuelve la lista con los juegos recomendados 
             return recommended_games[["app_name", "id"]].to_dict(orient="records")
 
