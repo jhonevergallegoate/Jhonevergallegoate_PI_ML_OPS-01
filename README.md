@@ -172,6 +172,6 @@ En este proyecto, asumí el rol de un Data Scientist, enfocándome en un proceso
 
 * **`ENLACE A LA API:`** En el Siguiente [enlace de la API](https://jhonevergallegoate-pi-ml-ops-01.onrender.com) podras encontrar el acceso a la API de este proyecto y realizar las consultas que se proponen.
 
-* **`ENLACE AL VIDEO EXPLICATIVO:`** Se ha creado un [video explicativo](https://) donde te explico como se desarrolló este proyecto y como funciona la API.
+* **`ENLACE AL VIDEO EXPLICATIVO:`** Se ha creado un [video explicativo](https://www.youtube.com/watch?v=J0_sW3-3Rko) donde te explico como se desarrolló este proyecto y como funciona la API.
 
 <br/>
